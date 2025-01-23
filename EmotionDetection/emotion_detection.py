@@ -39,7 +39,7 @@ def emotion_detector(text_to_analyse):
         # Extract emotion scores
         emotions = formatted_response['emotionPredictions'][0]['emotion']
         
-        # Identify the dominant emotion
+        # Identify the dominant emotionl
         dominant_emotion = max(emotions.items(), key=lambda x: x[1])[0]
         
         # Return results in required format
