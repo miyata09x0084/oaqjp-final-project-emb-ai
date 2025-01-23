@@ -13,8 +13,7 @@ def emotion_detector(text_to_analyse):
         dict: API response containing sentiment analysis results
     """
     # API endpoint for sentiment analysis
-    url = ('https://sn-watson-sentiment-bert.labs.skills.network/v1/watson.runtime'
-           '.nlp.v1/NlpService/SentimentPredict')
+    url = ('https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict')
     
     # Prepare request payload
     myobj = {
@@ -24,9 +23,7 @@ def emotion_detector(text_to_analyse):
     }
     
     # Set required headers for API request
-    header = {
-        "grpc-metadata-mm-model-id": "sentiment_aggregated-bert-workflow_lang_multi_stock"
-    }
+    header = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     
     # Send POST request and get response
     response = requests.post(url, json=myobj, headers=header)
@@ -34,18 +31,37 @@ def emotion_detector(text_to_analyse):
     # Parse response as JSON and convert to dictionary
     formatted_response = json.loads(response.text)
     
-    # Extract emotion scores
-    emotions = formatted_response['emotionPredictions'][0]['emotion']
+    # Print response content for debugging
+    print("API Response:")
+    print(formatted_response)
     
-    # Identify the dominant emotion
-    dominant_emotion = max(emotions.items(), key=lambda x: x[1])[0]
-    
-    # Return results in required format
-    return {
-        'anger': emotions['anger'],
-        'disgust': emotions['disgust'],
-        'fear': emotions['fear'],
-        'joy': emotions['joy'],
-        'sadness': emotions['sadness'],
-        'dominant_emotion': dominant_emotion
-    }
+    try:
+        # Extract emotion scores
+        emotions = formatted_response['emotionPredictions'][0]['emotion']
+        
+        # Identify the dominant emotion
+        dominant_emotion = max(emotions.items(), key=lambda x: x[1])[0]
+        
+        # Return results in required format
+        result = {
+            'anger': emotions['anger'],
+            'disgust': emotions['disgust'],
+            'fear': emotions['fear'],
+            'joy': emotions['joy'],
+            'sadness': emotions['sadness'],
+            'dominant_emotion': dominant_emotion
+        }
+        
+        # Print results
+        print('Emotion Scores:')
+        print(f'Anger: {result["anger"]}')
+        print(f'Disgust: {result["disgust"]}')
+        print(f'Fear: {result["fear"]}')
+        print(f'Joy: {result["joy"]}')
+        print(f'Sadness: {result["sadness"]}')
+        print(f'Dominant Emotion: {result["dominant_emotion"]}')
+        
+        return result
+    except KeyError as e:
+        print(f"Error accessing response data: {e}")
+        return None
