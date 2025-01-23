@@ -12,6 +12,7 @@ def emotion_detector(text_to_analyse):
     Returns:
         dict: API response containing sentiment analysis results
     """
+    
     # API endpoint for sentiment analysis
     url = ('https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict')
     
@@ -28,6 +29,17 @@ def emotion_detector(text_to_analyse):
     # Send POST request and get response
     response = requests.post(url, json=myobj, headers=header)
     
+    if response.status_code == 400:
+        print("Error: Invalid input text.")
+        return {
+            'anger': None,
+            'disgust': None,
+            'fear': None,
+            'joy': None,
+            'sadness': None,
+            'dominant_emotion': None
+        }
+    
     # Parse response as JSON and convert to dictionary
     formatted_response = json.loads(response.text)
     
@@ -39,7 +51,7 @@ def emotion_detector(text_to_analyse):
         # Extract emotion scores
         emotions = formatted_response['emotionPredictions'][0]['emotion']
         
-        # Identify the dominant emotionl
+        # Identify the dominant emotion
         dominant_emotion = max(emotions.items(), key=lambda x: x[1])[0]
         
         # Return results in required format
